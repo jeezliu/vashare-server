@@ -47,14 +47,14 @@ class MainHandler(tornado.web.RequestHandler):
 
 class KdataHandler(tornado.web.RequestHandler):
     def get_k_data(self, code):
-        return ts.get_hist_data(code)
+        data = ts.get_hist_data(code)
+        return data[::-1]
 
     @gen.coroutine
     def get(self):
         code = self.get_argument("code")
         pool = ThreadPoolExecutor(4)
         data = yield pool.submit(self.get_k_data, code)
-        
         self.set_header("Access-Control-Allow-Origin", "*")
         self.write(data.to_csv())
 
